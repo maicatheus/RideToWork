@@ -1,9 +1,15 @@
 import ground_image from '../img/ground.png'
+import background_image from '../img/backgroundImage.png'
+import casa1 from '../img/casa1.png'
+import casa2 from '../img/casa2.png'
+import casa3 from '../img/casa3.png'
+import pucrs from '../img/pucrs.png'
+import aquiris from '../img/aquiris.png'
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
-canvas.width = innerWidth
-canvas.height = 600 
+canvas.width = 800
+canvas.height = 530
 
 const  gravity = 0.5
 
@@ -63,27 +69,109 @@ class Ground{
     }
 }
 
+class GenericObject{
+    constructor({ x,y, image }){
+      this.position = {
+          x,
+          y
+      }
 
-const image = new Image()
-image.src = ground_image
+      this.image = image
+      this.width = image.width
+      this.height = image.height
+    }
+  
+    draw(){
+      c.drawImage(this.image, this.position.x, this.position.y)
+      }
+  }
+
+function createImage(url){
+    const image = new Image()
+    image.src = url
+    return image
+}
+
+
 const player = new Player()
+
+const groundImage = createImage(ground_image)
 
 const gounds = [
     new Ground({
         x:0,
         y:500,
-        image
+        image: groundImage
     }), 
     new Ground({
-        x:700,
+        x:(groundImage.width),
         y:500,
-        image
+        image:groundImage
     }),
     new Ground({
-      x:700 + 700,
+      x:(2*groundImage.width + 60),
       y:500,
-      image
-  })
+      image:groundImage
+    }),
+    new Ground({
+        x:(3*groundImage.width + 200),
+        y:500,
+        image:groundImage
+    }),
+    new Ground({
+        x:(4*groundImage.width + 320),
+        y:500,
+        image:groundImage
+    }),
+    new Ground({
+        x:(5*groundImage.width + 400),
+        y:500,
+        image:groundImage
+    }),
+    new Ground({
+        x:(6*groundImage.width + 400),
+        y:500,
+        image:groundImage
+    }),
+    new Ground({
+        x:(7*groundImage.width + 400),
+        y:500,
+        image:groundImage
+    })
+
+]
+const background = new GenericObject({
+    x:0,
+    y:0,
+    image: createImage(background_image)
+})
+const generricObjects = [
+    new GenericObject({
+        x:2*createImage(casa1).height,
+        y:createImage(casa1).height - 60,
+        image: createImage(casa1)
+    }),
+    new GenericObject({
+        x:3.3*createImage(casa2).width,
+        y:510 - createImage(casa2).height ,
+        image: createImage(casa2)
+    }),
+    new GenericObject({
+        x:5*createImage(casa3).width,
+        y:510 - createImage(casa3).height ,
+        image: createImage(casa3)
+    }),
+
+    new GenericObject({
+        x:3*createImage(pucrs).width,
+        y:510 - createImage(pucrs).height ,
+        image: createImage(pucrs)
+    }),
+    new GenericObject({
+        x:6.5*createImage(aquiris).width,
+        y:510 - createImage(aquiris).height ,
+        image: createImage(aquiris)
+    }),
 ]
 
 const keys = {
@@ -95,32 +183,51 @@ const keys = {
     },
 }
 
+let scrolScreem = 0
+
 function animate(){
     requestAnimationFrame(animate)
-    c.clearRect(0,0, canvas.width,canvas.height)
-    player.update()
+    c.fillStyle = 'white'
+    c.fillRect(0,0, canvas.width,canvas.height)
+    background.draw()
+    generricObjects.forEach(generricObjects =>{
+        generricObjects.draw()
+    })
     gounds.forEach(ground =>{
         ground.draw()
     })
+    player.update()
 
 
     if (keys.right.pressed && player.position.x < 200){
         player.velocity.x = 5
-    } else if (keys.left.pressed && player.position.x > 100){
+    } else if (keys.left.pressed && player.position.x > 50){
         player.velocity.x = -5
     } else {
         player.velocity.x = 0
 
         if(keys.right.pressed){
             gounds.forEach(ground =>{
+                scrolScreem += 5
                 ground.position.x -= 5
+            })
+            generricObjects.forEach(genericObject =>{
+                genericObject.position.x -=3
             })
         }
         if(keys.left.pressed){
-            gounds.forEach(ground =>{
-                ground.position.x += 5
-            })
+            if (scrolScreem >= 5){
+                gounds.forEach(ground =>{
+                    scrolScreem -= 5
+                    ground.position.x += 5
+                })
+                generricObjects.forEach(genericObject =>{
+                    genericObject.position.x +=3
+                })
+            }
         }
+        console.log(scrolScreem)
+        
     }
 
     // ground collision detection

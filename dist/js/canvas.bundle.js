@@ -177,6 +177,32 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/img/ridesprite.png":
+/*!********************************!*\
+  !*** ./src/img/ridesprite.png ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "cb7b6f5b5f629873038f95de77dce264.png");
+
+/***/ }),
+
+/***/ "./src/img/standup.png":
+/*!*****************************!*\
+  !*** ./src/img/standup.png ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (__webpack_require__.p + "1d1c0d068fb5e9d7d889cdf22f11c425.png");
+
+/***/ }),
+
 /***/ "./src/js/canvas.js":
 /*!**************************!*\
   !*** ./src/js/canvas.js ***!
@@ -193,11 +219,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _img_casa3_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../img/casa3.png */ "./src/img/casa3.png");
 /* harmony import */ var _img_pucrs_png__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../img/pucrs.png */ "./src/img/pucrs.png");
 /* harmony import */ var _img_aquiris_png__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../img/aquiris.png */ "./src/img/aquiris.png");
+/* harmony import */ var _img_ridesprite_png__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../img/ridesprite.png */ "./src/img/ridesprite.png");
+/* harmony import */ var _img_standup_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../img/standup.png */ "./src/img/standup.png");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
 
 
 
@@ -224,19 +254,31 @@ var Player = /*#__PURE__*/function () {
       x: 0,
       y: 1
     };
-    this.width = 30;
-    this.height = 30;
+    this.width = 100;
+    this.height = 100;
+    this.image = createImage(_img_standup_png__WEBPACK_IMPORTED_MODULE_8__["default"]);
+    this.frames = 0;
+    this.sprites = {
+      stand: createImage(_img_standup_png__WEBPACK_IMPORTED_MODULE_8__["default"]),
+      ride: createImage(_img_ridesprite_png__WEBPACK_IMPORTED_MODULE_7__["default"])
+    };
+    this.currentSprite = this.sprites.stand;
   }
 
   _createClass(Player, [{
     key: "draw",
     value: function draw() {
-      c.fillStyle = 'red';
-      c.fillRect(this.position.x, this.position.y, this.width, this.height);
+      c.drawImage(this.currentSprite, 210.75 * this.frames, 0, 210.75, 184, this.position.x, this.position.y, this.width, this.height);
     }
   }, {
     key: "update",
     value: function update() {
+      this.frames++;
+
+      if (this.frames >= 24) {
+        this.frames = 0;
+      }
+
       this.draw();
       this.position.y += this.velocity.y;
       this.position.x += this.velocity.x;
@@ -319,27 +361,27 @@ var gounds = [new Ground({
   y: 500,
   image: groundImage
 }), new Ground({
-  x: 2 * groundImage.width + 60,
+  x: 2 * groundImage.width + 120,
   y: 500,
   image: groundImage
 }), new Ground({
-  x: 3 * groundImage.width + 200,
+  x: 3 * groundImage.width + 300,
   y: 500,
   image: groundImage
 }), new Ground({
-  x: 4 * groundImage.width + 320,
+  x: 4 * groundImage.width + 450,
   y: 500,
   image: groundImage
 }), new Ground({
-  x: 5 * groundImage.width + 400,
+  x: 5 * groundImage.width + 570,
   y: 500,
   image: groundImage
 }), new Ground({
-  x: 6 * groundImage.width + 400,
+  x: 6 * groundImage.width + 630,
   y: 500,
   image: groundImage
 }), new Ground({
-  x: 7 * groundImage.width + 400,
+  x: 7 * groundImage.width + 630,
   y: 500,
   image: groundImage
 })];
@@ -391,6 +433,7 @@ function animate() {
     ground.draw();
   });
   player.update();
+  console.log(player.position.y);
 
   if (keys.right.pressed && player.position.x < 400) {
     player.velocity.x = 5;
@@ -427,10 +470,14 @@ function animate() {
   console.log(scrolScreem);
 
   if (scrolScreem >= 6000) {
-    console.log('Ganhou!');
+    player.velocity.x = 10;
   }
 
-  if (player.position.y > canvas.height) {
+  if (player.position.x > 900) {
+    alert("Matheus chegou no horário!\n\n");
+  }
+
+  if (player.position.y > canvas.height && scrolScreem <= 6000) {
     alert("Você caiu!\nVai chegar atrasado!\n\nReinicia a página para tentar novamente!");
   } // ground collision detection
 
@@ -442,6 +489,7 @@ function animate() {
   });
 }
 
+alert("Utilize 'A' e 'D' para se mover e 'W' para saltar! ");
 animate();
 addEventListener('keydown', function (_ref3) {
   var keyCode = _ref3.keyCode;
@@ -452,6 +500,7 @@ addEventListener('keydown', function (_ref3) {
     case 65:
       console.log('esquerda');
       keys.left.pressed = true;
+      player.currentSprite = player.sprites.ride;
       break;
 
     case 83:
@@ -461,11 +510,16 @@ addEventListener('keydown', function (_ref3) {
     case 68:
       console.log('direita');
       keys.right.pressed = true;
+      player.currentSprite = player.sprites.ride;
       break;
 
     case 87:
       console.log('cima');
-      player.velocity.y -= 10;
+
+      if (player.position.y == 399.5) {
+        player.velocity.y -= 10;
+      }
+
       break;
 
     case 32:
@@ -485,11 +539,13 @@ addEventListener('keyup', function (_ref4) {
     case 65:
       console.log('esquerda');
       keys.left.pressed = false;
+      player.currentSprite = player.sprites.stand;
       break;
 
     case 68:
       console.log('direita');
       keys.right.pressed = false;
+      player.currentSprite = player.sprites.stand;
       break;
   }
 });

@@ -5,6 +5,9 @@ import casa2 from '../img/casa2.png'
 import casa3 from '../img/casa3.png'
 import pucrs from '../img/pucrs.png'
 import aquiris from '../img/aquiris.png'
+import rideToRight from '../img/ridesprite.png'
+import standUp from '../img/standup.png'
+
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
@@ -23,21 +26,37 @@ class Player{
            x:0,
            y:1
        }
-       this.width = 30
-       this.height = 30
+       this.width = 100
+       this.height = 100
+       this.image = createImage(standUp)
+       this.frames = 0
+       this.sprites = {
+           stand: createImage(standUp),
+           ride: createImage(rideToRight) 
+       }
+
+       this.currentSprite = this.sprites.stand
     }
 
     draw(){
-        c.fillStyle = 'red'
-        c.fillRect(
+        c.drawImage(
+            this.currentSprite,
+            210.75 * this.frames,
+            0,
+            210.75,
+            184, 
             this.position.x, 
-            this.position.y,
+            this.position.y, 
             this.width,
-            this.height
-        ) 
+            this.height)        
     }
 
     update(){
+        this.frames++
+        if(this.frames>=24){
+            this.frames = 0
+        }
+
         this.draw()
         this.position.y+=this.velocity.y
         this.position.x+=this.velocity.x
@@ -109,32 +128,32 @@ const gounds = [
         image:groundImage
     }),
     new Ground({
-      x:(2*groundImage.width + 60),
+      x:(2*groundImage.width + 120),
       y:500,
       image:groundImage
     }),
     new Ground({
-        x:(3*groundImage.width + 200),
+        x:(3*groundImage.width + 300),
         y:500,
         image:groundImage
     }),
     new Ground({
-        x:(4*groundImage.width + 320),
+        x:(4*groundImage.width + 450),
         y:500,
         image:groundImage
     }),
     new Ground({
-        x:(5*groundImage.width + 400),
+        x:(5*groundImage.width + 570),
         y:500,
         image:groundImage
     }),
     new Ground({
-        x:(6*groundImage.width + 400),
+        x:(6*groundImage.width + 630),
         y:500,
         image:groundImage
     }),
     new Ground({
-        x:(7*groundImage.width + 400),
+        x:(7*groundImage.width + 630),
         y:500,
         image:groundImage
     })
@@ -200,7 +219,7 @@ function animate(){
 
     player.update()
 
-    
+    console.log(player.position.y)
     if (keys.right.pressed && player.position.x < 400){
         player.velocity.x = 5
     } else if (keys.left.pressed && player.position.x > 50){
@@ -234,10 +253,12 @@ function animate(){
     }
     console.log(scrolScreem)
     if(scrolScreem>=6000){
-        console.log('Ganhou!')
+        player.velocity.x = 10
     }
-
-    if(player.position.y > canvas.height){
+    if(player.position.x > 900){
+        alert("Matheus chegou no horário!\n\n")
+    }
+    if(player.position.y > canvas.height && scrolScreem<=6000){
         alert("Você caiu!\nVai chegar atrasado!\n\nReinicia a página para tentar novamente!")
     }
 
@@ -251,6 +272,7 @@ function animate(){
 
 }
 
+alert("Utilize 'A' e 'D' para se mover e 'W' para saltar! ")
 animate()
 
 addEventListener('keydown', ( {keyCode} ) =>{
@@ -260,6 +282,7 @@ addEventListener('keydown', ( {keyCode} ) =>{
         case 65:
             console.log('esquerda')
             keys.left.pressed = true
+            player.currentSprite = player.sprites.ride
             break
         case 83:
             console.log('baixo')
@@ -267,10 +290,13 @@ addEventListener('keydown', ( {keyCode} ) =>{
         case 68:
             console.log('direita')
             keys.right.pressed = true
+            player.currentSprite = player.sprites.ride
             break
         case 87:
             console.log('cima')
-            player.velocity.y -= 10
+            if (player.position.y ==399.5){
+                player.velocity.y -= 10
+            }
             break
         case 32:
             console.log('barra')
@@ -289,10 +315,12 @@ addEventListener('keyup', ( {keyCode} ) =>{
         case 65:
             console.log('esquerda')
             keys.left.pressed = false
+            player.currentSprite = player.sprites.stand
             break
         case 68:
             console.log('direita')
             keys.right.pressed = false
+            player.currentSprite = player.sprites.stand
             break
     
 }

@@ -240,7 +240,7 @@ var Player = /*#__PURE__*/function () {
       this.draw();
       this.position.y += this.velocity.y;
       this.position.x += this.velocity.x;
-      if (this.position.y + this.height + this.velocity.y <= canvas.height) this.velocity.y += gravity;else this.velocity.y = 0;
+      if (this.position.y + this.height + this.velocity.y <= canvas.height) this.velocity.y += gravity;
     }
   }]);
 
@@ -392,36 +392,46 @@ function animate() {
   });
   player.update();
 
-  if (keys.right.pressed && player.position.x < 200) {
+  if (keys.right.pressed && player.position.x < 400) {
     player.velocity.x = 5;
   } else if (keys.left.pressed && player.position.x > 50) {
     player.velocity.x = -5;
   } else {
     player.velocity.x = 0;
 
-    if (keys.right.pressed) {
-      gounds.forEach(function (ground) {
-        scrolScreem += 5;
-        ground.position.x -= 5;
-      });
-      generricObjects.forEach(function (genericObject) {
-        genericObject.position.x -= 3;
-      });
-    }
-
-    if (keys.left.pressed) {
-      if (scrolScreem >= 5) {
+    if (scrolScreem <= 6300) {
+      if (keys.right.pressed) {
         gounds.forEach(function (ground) {
-          scrolScreem -= 5;
-          ground.position.x += 5;
+          ground.position.x -= 5;
+          scrolScreem += 1;
         });
         generricObjects.forEach(function (genericObject) {
-          genericObject.position.x += 3;
+          genericObject.position.x -= 3;
         });
       }
-    }
 
-    console.log(scrolScreem);
+      if (keys.left.pressed) {
+        if (scrolScreem >= 5) {
+          gounds.forEach(function (ground) {
+            ground.position.x += 5;
+            scrolScreem -= 1;
+          });
+          generricObjects.forEach(function (genericObject) {
+            genericObject.position.x += 3;
+          });
+        }
+      }
+    }
+  }
+
+  console.log(scrolScreem);
+
+  if (scrolScreem >= 6000) {
+    console.log('Ganhou!');
+  }
+
+  if (player.position.y > canvas.height) {
+    alert("Você caiu!\nVai chegar atrasado!\n\nReinicia a página para tentar novamente!");
   } // ground collision detection
 
 
